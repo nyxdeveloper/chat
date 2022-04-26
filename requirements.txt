@@ -1,0 +1,6 @@
+django==3.2
+djangorestframework
+djangorestframework-jwt
+channels
+channels_redis
+pyfcm
