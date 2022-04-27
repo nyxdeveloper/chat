@@ -44,7 +44,7 @@ class MessageViewSet(ModelViewSet):
     serializer_class = MessageSerializer
     pagination_class = StandardPagination
     permission_classes = [IsAuthenticated]
-    filterset_fields = ["chat"]
+    filterset_fields = ["chat", "chat__object_id", "chat__object_type"]
     search_fields = ["text"]
 
     def get_queryset(self):
