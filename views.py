@@ -83,6 +83,13 @@ class MessageViewSet(ModelViewSet):
         async_to_sync(channel_layer.group_send)(
             f"messages-{self.request.user.pk}", {"type": "new_message", "message": message_text_data}
         )
+        extra_notification_kwargs = {
+            "push_type": "message",
+            "chat_id": message_chat_id,
+            "chat_object_id": message_chat_object_id,
+            "chat_object_type": message_chat_object_type,
+            "chat": chat_data
+        }
         for participant in message.chat.participants.filter(is_active=True):
             push_service.notify_topic_subscribers(
                 message_title=message.user.name,
@@ -90,13 +97,7 @@ class MessageViewSet(ModelViewSet):
                 topic_name=str(participant.pk),
                 message_body=message_cut_text,
                 sound="default",
-                extra_notification_kwargs={
-                    "push_type": "message",
-                    "chat_id": message_chat_id,
-                    "chat_object_id": message_chat_object_id,
-                    "chat_object_type": message_chat_object_type,
-                    "chat": chat_data
-                }
+                extra_notification_kwargs=extra_notification_kwargs
             )
 
 
