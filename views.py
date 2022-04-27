@@ -1,6 +1,8 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.utils import json, encoders
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from django.db.models import Q
 from django.db import transaction
@@ -99,6 +101,13 @@ class MessageViewSet(ModelViewSet):
                 sound="default",
                 extra_notification_kwargs=extra_notification_kwargs
             )
+
+    @action
+    def unread_count(self, request):
+        queryset = self.filter_queryset(self.get_queryset())
+        return Response({
+            "count": queryset.filter(chat__participants=request.user).exclude(have_read=request.user).count()
+        })
 
 
 class MessageMediaViewSet(ModelViewSet):
