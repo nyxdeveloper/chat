@@ -32,6 +32,17 @@ class Message(models.Model):
     changed = models.BooleanField(default=False)
     deleted = models.BooleanField(default=False)
 
+    @staticmethod
+    def get_unread_count(user):
+        return Message.objects.filter(chat__participants=user).exclude(have_read=user).count()
+
+    @property
+    def cut_text(self):
+        if len(self.text) > 1100:
+            return self.text[:1097] + "..."
+        else:
+            return self.text
+
     def __str__(self):
         return self.text
 
